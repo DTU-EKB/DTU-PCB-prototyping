@@ -285,6 +285,8 @@ So set your *Clearance* (see [What to keep in mind](#what-to-keep-in-mind)) acco
 - **0,8 mm flat endmill** (the usual bit): use at least **1,0 mm** clearance — **1,2 mm** is safer.
 - **0,4 mm (1/64") engraving bit**: can isolate the standard **0,8 mm** clearance.
 
+![CNC clearance in Net Classes](images-for-guides/cnc-images/cnc_clearance.png "Set the clearance in Board Setup -> Net Classes")
+
 Everything else is the same as for the laser: keep all traces on **B.Cu**, use through-hole footprints, run the **Design Rule Checker (DRC)**, and draw your board outline on the **Edge.Cuts** layer.
 
 > [!TIP]
@@ -307,8 +309,12 @@ The CNC router does **not** use a DXF like the laser. It needs **Gerber + drill 
 
 Set *Export units* to **Millimeters** and click **Plot**.
 
+![KiCad Gerber export](images-for-guides/cnc-images/cnc_export_gerbers.png "Plot dialog: B.Cu + Edge.Cuts, millimeters")
+
 #### 3. Generate the drill file:
 In the same window click **Generate Drill Files…**, leave the defaults (Excellon format), and click **Generate Drill File**.
+
+![KiCad Generate Drill Files](images-for-guides/cnc-images/cnc_generate_drill.png "Generate Drill Files: Excellon, millimeters")
 
 You should end up with a folder containing a `*-B_Cu` Gerber, an `*-Edge_Cuts` Gerber and a `*.drl` drill file.
 
@@ -319,15 +325,31 @@ You should end up with a folder containing a `*-B_Cu` Gerber, an `*-Edge_Cuts` G
 ### Generating the toolpaths with srm-cam
 [`srm-cam`](https://github.com/MadsRudolph/srm-cam) reads your Gerber folder and writes the **toolpaths** the SRM-20 runs. Install and launch it by following its own README (there is a one-click launcher).
 
-1. Open `srm-cam` and select your exported **Gerber folder**.
+1. Open `srm-cam` and click **Load Gerber folder…** to select your exported **Gerber folder**. The board preview appears on the right.
+
+![srm-cam board loaded](images-for-guides/cnc-images/srmcam_load.png "Gerber folder loaded in srm-cam")
+
 2. **Choose the machine** — this is what decides the output format:
    - **Roland SRM-20 (G-code)** → produces **`.nc`** (G-code) files.
    - **Roland SRM-20** (the normal one) → produces **`.rml`** (Roland RML-1) files.
+
+![srm-cam machine dropdown](images-for-guides/cnc-images/srmcam_machine.png "Machine: Roland SRM-20 (G-code) vs Roland SRM-20")
+
 3. Choose the **SRM-20 0,8 mm** preset, or set the bit diameter, clearance and depths to match your endmill.
-4. Export. You get three jobs:
+
+![srm-cam preset](images-for-guides/cnc-images/srmcam_preset.png "SRM-20 0,8 mm preset, Traces tab")
+
+> [!IMPORTANT]
+> On the **Drill** tab, tick **single bit** if you want to drill *every* hole with the same 0,8 mm endmill you used for the traces — even holes that are bigger than the bit. srm-cam **interpolates** (mills out a circle for) any hole wider than the bit, so you never have to stop and swap to a matching drill bit.
+
+![srm-cam single-bit drill setting](images-for-guides/cnc-images/srmcam_drill_singlebit.png "Drill tab: tick single bit")
+
+4. Click **Export toolpaths…**. You get three jobs:
    - **traces** — isolates your copper,
    - **drill** — the component holes,
    - **cut-out** — frees the board, leaving a few small **tabs** so it doesn't come loose mid-cut.
+
+![srm-cam exported files](images-for-guides/cnc-images/srmcam_export.png "Exported traces / drill / cut-out + run plan")
 
 > [!IMPORTANT]
 > The machine you pick in `srm-cam` must match the **command set** you select on the SRM-20 in VPanel: G-code (`.nc`) files need **NC code**, RML (`.rml`) files need **RML-1**. The two are not interchangeable.
