@@ -364,14 +364,16 @@ The SRM-20 is driven from the **VPanel** software. The whole board is cut from *
 
 3. Mount your taped-down board onto the sacrificial backing and fit the endmill.
 
-4. **Set the origin — this is the important part:**
-   - Jog the spindle to the corner of your board and set the **X/Y origin** there (this becomes the *user origin*, i.e. `G54`).
-   - Lower the bit until it just touches the copper and set the **Z origin** there.
+4. **Set the X/Y origin:** jog the spindle to the corner of your board and set the **X/Y origin** there (this becomes the *user origin*, i.e. `G54`).
 
-5. **Run the three jobs in order, from the same origin: traces → drill → cut-out.** They share the same endmill and X/Y origin, so **do not move or re-home the board between them**. If you swap the bit, **re-set only the Z origin** — never touch X/Y.
+5. **Set the Z origin with the bit-drop method:**
+   - Bring the Z axis down until the bit **almost** touches the copper.
+   - **Loosen the collet** so the bit can slide freely, and let it **drop down onto the copper** so the tip rests on the surface.
+   - With the bit still loose, bring the Z axis **down a little further** to press the bit further up into the collet — this keeps the tip pressed firmly onto the copper.
+   - **Tighten the collet**, being careful **not to push the bit upwards as you tighten** — nudging it up lifts the tip off the surface and ruins the Z-zero.
+   - Set the **Z origin** here: the bit tip is now sitting exactly on the copper surface.
 
-> [!TIP]
-> For a repeatable Z-zero, clip a multimeter (continuity mode) between the bit and the copper and jog the bit down slowly until it beeps — that's the exact moment it touches.
+6. **Run the three jobs in order, from the same origin: traces → drill → cut-out.** They share the same endmill and X/Y origin, so **do not move or re-home the board between them**. If you swap the bit, **re-set only the Z origin** — never touch X/Y.
 
 > [!IMPORTANT]
 > Always run the **cut-out last**. It frees the board (held only by the small tabs), so anything done after it would shift out of alignment.
