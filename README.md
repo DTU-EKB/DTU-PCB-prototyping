@@ -259,7 +259,126 @@ When the machine is working, remember to not stare at the burn light on the PCB!
 ---
 
 ## Making PCBs with the Roland CNC router
-Work in progress (monoFab SRM-20)
+The Roland monoFab **SRM-20** is a small desktop CNC mill. Instead of burning the copper away like the Fiber laser, it **mechanically cuts** thin isolation channels around your traces with a spinning endmill, drills the component holes, and cuts the finished board free — all in one setup. It's a good alternative when the laser is busy or unavailable.
+
+- [Selecting the right components](#selecting-the-right-components-cnc)
+- [Correcting your design for the CNC router](#correcting-your-design-for-the-cnc-router)
+- [Exporting from KiCad](#exporting-from-kicad-cnc)
+- [Generating the toolpaths with srm-cam](#generating-the-toolpaths-with-srm-cam)
+- [Preparing your PCB](#preparing-your-pcb-cnc)
+- [Using the SRM-20](#using-the-srm-20)
+
+<br>
+
+### Selecting the right components (CNC)
+Exactly the same as for the Fiber laser — single-sided, with all traces on the back layer (**B.Cu**) and the through-hole footprints listed at the bottom of this guide[^3].
+
+<br>
+
+### Correcting your design for the CNC router
+Unlike the Fiber laser, the CNC router does **not** need a *Filled zone* — the mill isolates each trace by cutting a thin channel around it, so there is no large area to clear away. Instead it has its own rule:
+
+> [!IMPORTANT]
+> **Your clearance must be at least as wide as the endmill.** A 0,8 mm endmill physically cannot fit inside a 0,8 mm gap, so it cannot separate two traces that are only 0,8 mm apart.
+
+So set your *Clearance* (see [What to keep in mind](#what-to-keep-in-mind)) according to the endmill you will use:
+- **0,8 mm flat endmill** (the usual bit): use at least **1,0 mm** clearance — **1,2 mm** is safer.
+- **0,4 mm (1/64") engraving bit**: can isolate the standard **0,8 mm** clearance.
+
+Everything else is the same as for the laser: keep all traces on **B.Cu**, use through-hole footprints, run the **Design Rule Checker (DRC)**, and draw your board outline on the **Edge.Cuts** layer.
+
+> [!TIP]
+> You don't have to eyeball whether the bit fits. The `srm-cam` tool (next step) runs a **narrow-gap check** that lists every channel too tight for the bit you picked. Zero un-millable gaps = your clearances are fine.
+
+> [!TIP]
+> A small **fillet** (rounded corner) on each corner of your `Edge.Cuts` outline gives a cleaner cut-out and a board that's nicer to handle. Sharp corners work too.
+
+<br>
+
+### Exporting from KiCad (CNC)
+The CNC router does **not** use a DXF like the laser. It needs **Gerber + drill files**, which the `srm-cam` tool turns into machine code.
+
+#### 1. Open the *Plot* window:
+`File → Fabrication Outputs → Gerbers (.gbr)`
+
+#### 2. Choose an output folder you can find again, and tick at least these layers:
+   - **B.Cu** — your copper
+   - **Edge.Cuts** — the board outline
+
+Set *Export units* to **Millimeters** and click **Plot**.
+
+#### 3. Generate the drill file:
+In the same window click **Generate Drill Files…**, leave the defaults (Excellon format), and click **Generate Drill File**.
+
+You should end up with a folder containing a `*-B_Cu` Gerber, an `*-Edge_Cuts` Gerber and a `*.drl` drill file.
+
+---
+
+<br>
+
+### Generating the toolpaths with srm-cam
+[`srm-cam`](https://github.com/MadsRudolph/srm-cam) reads your Gerber folder and writes the **toolpaths** the SRM-20 runs. Install and launch it by following its own README (there is a one-click launcher).
+
+1. Open `srm-cam` and select your exported **Gerber folder**.
+2. Choose the **SRM-20 0,8 mm** preset, or set the bit diameter, clearance and depths to match your endmill.
+3. Export. You get three jobs:
+   - **traces** — isolates your copper,
+   - **drill** — the component holes,
+   - **cut-out** — frees the board, leaving a few small **tabs** so it doesn't come loose mid-cut,
+
+   ...each in two formats: **`.nc`** (G-code) and **`.rml`** (Roland RML-1). Both run on the SRM-20 — just pick one command set and use it for the whole board.
+
+> [!NOTE]
+> `srm-cam` also writes a short **run-plan** text file listing the order, the bit and the cut depth for each job. Read it before you start.
+
+> [!IMPORTANT]
+> The **cut-out depth must be larger than your board thickness** so the board actually comes free (about **2,3 mm** for a 1,6 mm board). The preset handles this, but double-check it matches your board.
+
+---
+
+<br>
+
+### Preparing your PCB (CNC)
+The same as for the laser (see [Preparing your PCB](#preparing-your-pcb)), with two milling-specific points:
+
+- The mill cuts **all the way through** on the cut-out step, so you **must** place a flat **sacrificial backing board** underneath your PCB — otherwise you cut into the machine bed.
+- **Tape the whole back of the board down flat** with double-sided tape. Any gap or warp changes the cut depth and ruins the isolation.
+
+<br>
+
+### Using the SRM-20
+> [!CAUTION]
+> **Have you completed the safety course???**
+>
+> If not, then you are not allowed to use the machine! Please contact the course Professor or TA's, alternativly someone from BuildDesign Lab.
+
+The SRM-20 is driven from the **VPanel** software. The whole board is cut from **one origin**, so the traces, holes and cut-out all line up.
+
+1. Power on the machine and open **VPanel**.
+
+2. **Set the command set** to match your files: `Setup → Command set →` **NC code** for `.nc`, or **RML-1** for `.rml`. Don't mix the two.
+
+3. Mount your taped-down board onto the sacrificial backing and fit the endmill.
+
+4. **Set the origin — this is the important part:**
+   - Jog the spindle to the corner of your board and set the **X/Y origin** there (this becomes the *user origin*, i.e. `G54`).
+   - Lower the bit until it just touches the copper and set the **Z origin** there.
+
+5. **Run the three jobs in order, from the same origin: traces → drill → cut-out.** They share the same endmill and X/Y origin, so **do not move or re-home the board between them**. If you swap the bit, **re-set only the Z origin** — never touch X/Y.
+
+> [!TIP]
+> For a repeatable Z-zero, clip a multimeter (continuity mode) between the bit and the copper and jog the bit down slowly until it beeps — that's the exact moment it touches.
+
+> [!IMPORTANT]
+> Always run the **cut-out last**. It frees the board (held only by the small tabs), so anything done after it would shift out of alignment.
+
+> [!NOTE]
+> In **NC code** mode the SRM-20 lifts the bit to full height between drill plunges. It looks dramatic and is a bit slow, but it is harmless. If you'd rather avoid it, run the **drill** job from the `.rml` file instead — RML mode uses a short retract.
+
+When the board is finished, snap the tabs, file the edges smooth, and your PCB is ready.
+
+> [!TIP]
+> Want **silkscreen labels** (the component names) on top? Export the **F.Silkscreen** layer as a DXF (do **not** mirror it) and engrave it on the bare top side with the Fiber laser.
 
 
 
