@@ -323,9 +323,43 @@ You should end up with a folder containing a `*-B_Cu` Gerber, an `*-Edge_Cuts` G
 <br>
 
 ### Generating the toolpaths with srm-cam
-[`srm-cam`](https://github.com/MadsRudolph/srm-cam) reads your Gerber folder and writes the **toolpaths** the SRM-20 runs. Install and launch it by following its own README (there is a one-click launcher).
+[`srm-cam`](https://github.com/MadsRudolph/srm-cam) reads your Gerber folder and writes the **toolpaths** the SRM-20 runs.
 
-1. Open `srm-cam` and click **Load Gerber folder…** to select your exported **Gerber folder**. The board preview appears on the right.
+#### First-time setup (once per PC)
+You need **[Git](https://git-scm.com/downloads)** and **[Python 3.10 or newer](https://www.python.org/downloads/)** installed first. When installing Python, tick **"Add python.exe to PATH"** on the first screen.
+
+Then open **PowerShell** and run these, one block at a time:
+
+```powershell
+# 1. Download the tool
+git clone https://github.com/MadsRudolph/srm-cam.git
+cd srm-cam
+
+# 2. Make an isolated Python environment just for it
+python -m venv .venv
+
+# 3. Install srm-cam and its interface into that environment
+.venv\Scripts\python -m pip install -e ".[gui]"
+```
+
+> [!NOTE]
+> These commands call the environment's Python directly (`.venv\Scripts\python`), so you do **not** have to "activate" anything and you won't hit PowerShell's *"running scripts is disabled"* warning.
+> On macOS or Linux, use `.venv/bin/python` instead of `.venv\Scripts\python`.
+
+#### Launching srm-cam
+From inside the `srm-cam` folder, start the program with:
+
+```powershell
+.venv\Scripts\python -m gerber2rml
+```
+
+That single line is all you need every time — just `cd` into the `srm-cam` folder first. The setup above is only done once.
+
+<br>
+
+#### Using it
+
+1. In `srm-cam`, click **Load Gerber folder…** and select your exported **Gerber folder**. The board preview appears on the right.
 
 ![srm-cam board loaded](images-for-guides/cnc-images/srmcam_load.png "Gerber folder loaded in srm-cam")
 
