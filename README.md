@@ -416,6 +416,9 @@ The same as for the laser (see [Preparing your PCB](#preparing-your-pcb)), with 
 >
 > If not, then you are not allowed to use the machine! Please contact the course Professor or TA's, alternativly someone from BuildDesign Lab.
 
+> [!CAUTION]
+> **Handle the endmills with care.** They are thin, brittle and **expensive to replace** — a snapped bit is both easy to do and costly. Don't force the bit or drop it, keep the feeds and cut depths sensible, and make sure it's properly seated in the collet before you cut.
+
 The SRM-20 is driven from the **VPanel** software. The whole board is cut from **one origin**, so the traces, holes and cut-out all line up.
 
 1. Power on the machine and open **VPanel**.
