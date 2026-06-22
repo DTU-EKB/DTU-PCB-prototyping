@@ -405,6 +405,10 @@ The SRM-20 is driven from the **VPanel** software. The whole board is cut from *
 
 When the board is finished, snap the tabs, file the edges smooth, and your PCB is ready.
 
+A correctly milled board looks like this — clean isolation channels around every trace, rounded corners, and the board still held in the surrounding stock by its small break-off tabs (held up to the light here so you can see the routed gaps):
+
+![Finished milled PCB held to the light, still attached by its break-off tabs](images-for-guides/cnc-images/cnc_finished_board.jpg "A correctly milled board, still held by its break-off tabs")
+
 > [!TIP]
 > Want **silkscreen labels** (the component names) on top? Export the **F.Silkscreen** layer as a DXF (do **not** mirror it) and engrave it on the bare top side with the Fiber laser.
 
