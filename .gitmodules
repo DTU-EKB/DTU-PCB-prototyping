@@ -1,0 +1,3 @@
+[submodule "srm-cam"]
+	path = srm-cam
+	url = https://github.com/MadsRudolph/srm-cam.git
