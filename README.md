@@ -365,9 +365,9 @@ That single line is all you need every time — just `cd` into the `srm-cam` fol
 
 ![srm-cam board loaded](images-for-guides/cnc-images/srmcam_load.png "Gerber folder loaded in srm-cam")
 
-2. **Choose the machine** — this is what decides the output format:
-   - **Roland SRM-20 (G-code)** → produces **`.nc`** (G-code) files.
-   - **Roland SRM-20** (the normal one) → produces **`.rml`** (Roland RML-1) files.
+2. **Choose the machine** — this decides the output format. **Use Roland SRM-20 (G-code)**; it's the default and the one we use.
+   - **Roland SRM-20 (G-code)** → **`.nc`** (G-code) files. **Recommended / default** — plain-millimetre coordinates and a standard G54 work origin.
+   - **Roland SRM-20** → **`.rml`** (Roland RML-1) files. A fallback only; you normally won't need it.
 
 ![srm-cam machine dropdown](images-for-guides/cnc-images/srmcam_machine.png "Machine: Roland SRM-20 (G-code) vs Roland SRM-20")
 
@@ -419,6 +419,18 @@ The same as for the laser (see [Preparing your PCB](#preparing-your-pcb)), with 
 
 The SRM-20 is driven from the **VPanel** software. The whole board is cut from **one origin**, so the traces, holes and cut-out all line up.
 
+#### The three coordinate systems
+
+VPanel's coordinate display (the dropdown in the top-left) can show three different systems. Knowing which is which avoids the classic *"my holes don't line up"* and *"the bit lifts to the top"* mistakes:
+
+| System | Who uses it | What it is |
+|---|---|---|
+| **Machine coordinate system** | You — for **checking** only | The machine's own **fixed** reference; its origin never moves. **Z = 0 is the very top** of the Z travel, with the bed ~60.5 mm below. Switch to this to *read* your Z headroom (the −55 mm check below) — you never cut in it. |
+| **User coordinate system** | **RML (`.rml`)** jobs | The work origin **you** set by jogging to your board and clicking *Set Origin Point*. |
+| **G54** | **NC code (`.nc`)** jobs | The **same kind** of work origin, under the name G-code uses for it. A `.nc` file says `G54` to mean "measure from the origin I set." |
+
+In short: the **user coordinate system** (used by RML) and **G54** (used by NC code) are both *the work origin you set* — just named differently by each command set. Set them to the **same board corner** and every job, `.nc` or `.rml`, lines up. The **machine coordinate system** is the fixed reference you only ever *read* (e.g. to check Z headroom), never cut from.
+
 1. Power on the machine and open **VPanel**.
 
 2. **Set the command set** to match your files: `Setup → Command set →` **NC code** for `.nc`, or **RML-1** for `.rml`. Don't mix the two.
@@ -433,14 +445,19 @@ The SRM-20 is driven from the **VPanel** software. The whole board is cut from *
    - With the bit still loose, bring the Z axis **down a little further** to press the bit further up into the collet — this keeps the tip pressed firmly onto the copper.
    - **Tighten the collet**, being careful **not to push the bit upwards as you tighten** — nudging it up lifts the tip off the surface and ruins the Z-zero.
    - Set the **Z origin** here: the bit tip is now sitting exactly on the copper surface.
+   - **Check you have enough downward travel left to reach full cut depth** (see the warning below): switch VPanel's coordinate display to **Machine Coordinate System** and read the Z value at the surface — it should be about **−55 mm or higher** (i.e. *less* negative). If it sits lower than that, raise the board and re-zero before cutting.
 
 6. **Run the three jobs in order, from the same origin: traces → drill → cut-out.** They share the same endmill and X/Y origin, so **do not move or re-home the board between them**. If you swap the bit, **re-set only the Z origin** — never touch X/Y.
 
 > [!IMPORTANT]
 > Always run the **cut-out last**. It frees the board (held only by the small tabs), so anything done after it would shift out of alignment.
 
-> [!NOTE]
-> In **NC code** mode the SRM-20 lifts the bit to full height between drill plunges. It looks dramatic and is a bit slow, but it is harmless. If you'd rather avoid it, run the **drill** job from the `.rml` file instead — RML mode uses a short retract.
+> [!WARNING]
+> **Bit lifting to full height after every plunge, and holes or the cut-out not going all the way through?** Both are the *same* problem — and it is **not** an NC-vs-RML quirk; it happens in both command sets.
+>
+> The SRM-20 has only **60.5 mm of Z travel**, with its Z-zero (machine origin) at the **top**. The copper surface you zero on sits somewhere down that range. If it sits **too low**, the deep cuts (drill and cut-out, ~2 mm) reach past the machine's lower limit (≈ **−60.5 mm**) and fall **outside the cuttable range**. When that happens the SRM-20 **raises the bit to the top** until the toolpath comes back into range — so you see a dramatic full-height lift after every plunge *and* cuts that stop short of going through the board.
+>
+> **Fix — give the bit more room below the surface:** use a **thicker sacrificial board** under the PCB and/or **extend the endmill further out of the collet**, then re-set the Z origin. Verify it with VPanel's display in **Machine Coordinate System**: the surface should read about **−55 mm or higher**. Rule of thumb — *(surface machine-Z) − (your deepest cut depth)* must stay above **−60.5 mm**. With the cuts back inside the range, the bit makes only a short retract and reaches full depth.
 
 When the board is finished, snap the tabs, file the edges smooth, and your PCB is ready.
 
