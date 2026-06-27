@@ -327,7 +327,7 @@ You should end up with a folder containing a `*-B_Cu` Gerber, an `*-Edge_Cuts` G
 [`srm-cam`](https://github.com/MadsRudolph/srm-cam) reads your Gerber folder and writes the **toolpaths** the SRM-20 runs.
 
 #### Install (one-time)
-Download the latest **`SRM-CAM-Setup-*.exe`** from the [srm-cam releases page](https://github.com/MadsRudolph/srm-cam/releases) and run it. It installs like any normal Windows program — you get Start-menu and desktop shortcuts, and **no Git or Python is needed**.
+Download **[`SRM-CAM-Setup.exe`](https://github.com/MadsRudolph/srm-cam/releases/latest/download/SRM-CAM-Setup.exe)** (always the newest build) and run it. It installs like any normal Windows program — you get Start-menu and desktop shortcuts, and **no Git or Python is needed**. *(All versions live on the [releases page](https://github.com/MadsRudolph/srm-cam/releases).)*
 
 <details>
 <summary><b>Alternative: run from source (advanced)</b></summary>
