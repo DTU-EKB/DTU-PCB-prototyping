@@ -267,6 +267,8 @@ The Roland monoFab **SRM-20** is a small desktop CNC mill. Instead of burning th
 - [Generating the toolpaths with srm-cam](#generating-the-toolpaths-with-srm-cam)
 - [Preparing your PCB](#preparing-your-pcb-cnc)
 - [Using the SRM-20](#using-the-srm-20)
+- [Double-sided boards (advanced)](#double-sided-boards-advanced)
+- [Bed leveling (optional)](#bed-leveling-optional)
 
 <br>
 
@@ -325,12 +327,13 @@ You should end up with a folder containing a `*-B_Cu` Gerber, an `*-Edge_Cuts` G
 ### Generating the toolpaths with srm-cam
 [`srm-cam`](https://github.com/MadsRudolph/srm-cam) reads your Gerber folder and writes the **toolpaths** the SRM-20 runs.
 
+#### Install (one-time)
+Download **[`SRM-CAM-Setup.exe`](https://github.com/MadsRudolph/srm-cam/releases/latest/download/SRM-CAM-Setup.exe)** (always the newest build) and run it. It installs like any normal Windows program — you get Start-menu and desktop shortcuts, and **no Git or Python is needed**. *(All versions live on the [releases page](https://github.com/MadsRudolph/srm-cam/releases).)*
+
 <details>
-<summary><b>First-time setup — installing srm-cam on your PC (click to expand)</b></summary>
+<summary><b>Alternative: run from source (advanced)</b></summary>
 
-You need **[Git](https://git-scm.com/downloads)** and **[Python 3.10 or newer](https://www.python.org/downloads/)** installed first. When installing Python, tick **"Add python.exe to PATH"** on the first screen.
-
-Then open **PowerShell** and run these, one block at a time:
+If you'd rather run the code directly, install **[Git](https://git-scm.com/downloads)** and **[Python 3.10 or newer](https://www.python.org/downloads/)** first (tick **"Add python.exe to PATH"** when installing Python). Then open **PowerShell** and run these, one block at a time:
 
 ```powershell
 # 1. Download the tool
@@ -342,6 +345,9 @@ python -m venv .venv
 
 # 3. Install srm-cam and its interface into that environment
 .venv\Scripts\python -m pip install -e ".[gui]"
+
+# 4. Launch it (run this every time; cd into the srm-cam folder first)
+.venv\Scripts\python -m gerber2rml
 ```
 
 > **Note:** these commands call the environment's Python directly (`.venv\Scripts\python`), so you do **not** have to "activate" anything and you won't hit PowerShell's *"running scripts is disabled"* warning. On macOS or Linux, use `.venv/bin/python` instead of `.venv\Scripts\python`.
@@ -349,13 +355,10 @@ python -m venv .venv
 </details>
 
 #### Launching srm-cam
-From inside the `srm-cam` folder, start the program with:
+Open **SRM-CAM** from the Start menu or the desktop shortcut. (If you installed from source instead, run `.venv\Scripts\python -m gerber2rml` from the `srm-cam` folder.)
 
-```powershell
-.venv\Scripts\python -m gerber2rml
-```
-
-That single line is all you need every time — just `cd` into the `srm-cam` folder first. The setup above is only done once.
+> [!TIP]
+> The first time it opens, srm-cam runs a short **guided tour** on a demo board, so you can follow the steps below right in the program. Replay it any time with the **Guide** button in the top bar — and each page (Double-sided, Bed leveling, Rework) has its own Guide button for that topic.
 
 <br>
 
@@ -365,22 +368,12 @@ That single line is all you need every time — just `cd` into the `srm-cam` fol
 
 ![srm-cam board loaded](images-for-guides/cnc-images/srmcam_load.png "Gerber folder loaded in srm-cam")
 
-2. **Choose the machine** — this decides the output format. **Use Roland SRM-20 (G-code)**; it's the default and the one we use.
-   - **Roland SRM-20 (G-code)** → **`.nc`** (G-code) files. **Recommended / default** — plain-millimetre coordinates and a standard G54 work origin.
-   - **Roland SRM-20** → **`.rml`** (Roland RML-1) files. A fallback only; you normally won't need it.
+2. **srm-cam opens already set up for the SRM-20** — *Roland SRM-20 (G-code)* output and the *SRM-20 0,8 mm* preset are the defaults, so you normally don't change anything. Just check that the bit diameter, clearance and depths suit your endmill and board. *(If you ever need Roland RML instead, switch the **Machine** dropdown to* Roland SRM-20 *— but G-code is what we use.)*
 
-![srm-cam machine dropdown](images-for-guides/cnc-images/srmcam_machine.png "Machine: Roland SRM-20 (G-code) vs Roland SRM-20")
+> [!NOTE]
+> By default every hole is drilled with the same 0,8 mm endmill (**single bit**): srm-cam **interpolates** (mills out a circle for) any hole wider than the bit, so you never have to stop and swap to a matching drill bit.
 
-3. Choose the **SRM-20 0,8 mm** preset, or set the bit diameter, clearance and depths to match your endmill.
-
-![srm-cam preset](images-for-guides/cnc-images/srmcam_preset.png "SRM-20 0,8 mm preset, Traces tab")
-
-> [!IMPORTANT]
-> On the **Drill** tab, tick **single bit** if you want to drill *every* hole with the same 0,8 mm endmill you used for the traces — even holes that are bigger than the bit. srm-cam **interpolates** (mills out a circle for) any hole wider than the bit, so you never have to stop and swap to a matching drill bit.
-
-![srm-cam single-bit drill setting](images-for-guides/cnc-images/srmcam_drill_singlebit.png "Drill tab: tick single bit")
-
-4. Click **Export toolpaths…**. You get three jobs:
+3. Click **Export toolpaths…**. You get three jobs:
    - **traces** — isolates your copper,
    - **drill** — the component holes,
    - **cut-out** — frees the board, leaving a few small **tabs** so it doesn't come loose mid-cut.
@@ -395,6 +388,11 @@ That single line is all you need every time — just `cd` into the `srm-cam` fol
 
 > [!IMPORTANT]
 > The **cut-out depth must be larger than your board thickness** so the board actually comes free (about **2,3 mm** for a 1,6 mm board). The preset handles this, but double-check it matches your board.
+
+> [!TIP]
+> Before you go to the machine, open **Simulate 3D** (also on the **3D Viewer** page) to watch the bit run the whole job — a quick way to spot a wrong depth or a move that runs off the board.
+>
+> ![srm-cam 3D simulation](images-for-guides/cnc-images/srmcam_3dview.png "srm-cam's 3D toolpath simulation")
 
 ---
 
@@ -431,9 +429,13 @@ VPanel's coordinate display (the dropdown in the top-left) can show three differ
 
 In short: the **user coordinate system** (used by RML) and **G54** (used by NC code) are both *the work origin you set* — just named differently by each command set. Set them to the **same board corner** and every job, `.nc` or `.rml`, lines up. The **machine coordinate system** is the fixed reference you only ever *read* (e.g. to check Z headroom), never cut from.
 
+![VPanel coordinate-system dropdown](images-for-guides/cnc-images/vpanel_coord_dropdown.png "VPanel's coordinate display: Machine / User / G54")
+
 1. Power on the machine and open **VPanel**.
 
 2. **Set the command set** to match your files: `Setup → Command set →` **NC code** for `.nc`, or **RML-1** for `.rml`. Don't mix the two.
+
+   ![VPanel command set](images-for-guides/cnc-images/vpanel_command_set.png "Setup dialog: Command set set to NC code")
 
 3. Seat your board in the bed's **clamping brackets** (on top of the sacrificial surface) so it's held flat, and fit the endmill.
 
@@ -446,6 +448,10 @@ In short: the **user coordinate system** (used by RML) and **G54** (used by NC c
    - **Tighten the collet**, being careful **not to push the bit upwards as you tighten** — nudging it up lifts the tip off the surface and ruins the Z-zero.
    - Set the **Z origin** here: the bit tip is now sitting exactly on the copper surface.
    - **Check you have enough downward travel left to reach full cut depth** (see the warning below): switch VPanel's coordinate display to **Machine Coordinate System** and read the Z value at the surface — it should be about **−55 mm or higher** (i.e. *less* negative). If it sits lower than that, raise the board and re-zero before cutting.
+
+   ![VPanel set Z origin (bit-drop method)](images-for-guides/cnc-images/vpanel_z_origin.png "Rest the loosened bit on the copper, then set the Z origin")
+
+   ![VPanel machine-Z headroom check](images-for-guides/cnc-images/vpanel_machine_z.png "Machine Coordinate System: the surface should read about −55 mm or higher")
 
 6. **Run the three jobs in order, from the same origin: traces → drill → cut-out.** They share the same endmill and X/Y origin, so **do not move or re-home the board between them**. If you swap the bit, **re-set only the Z origin** — never touch X/Y.
 
@@ -467,6 +473,52 @@ A correctly milled board looks like this — clean isolation channels around eve
 
 > [!TIP]
 > Want **silkscreen labels** (the component names) on top? Export the **F.Silkscreen** layer as a DXF (do **not** mirror it) and engrave it on the bare top side with the Fiber laser.
+
+<br>
+
+### Double-sided boards (advanced)
+> [!NOTE]
+> The course defaults to single-sided boards[^1]. Two-sided boards are possible on the SRM-20 but more fiddly — only attempt them after checking with the people responsible for the machine.
+
+For a two-sided board you mill the bottom, **flip the board left&#8596;right**, and mill the top from the *same* origin. srm-cam keeps the two sides aligned off two **dowel pins**, never the (never-quite-square) sheared board edge.
+
+![Double-sided flip](images-for-guides/cnc-images/double_sided_flip.png "The board flips left-right about the vertical axis; the dowels sit on that axis so they don't move")
+
+How it works, briefly:
+- The board flips **left-to-right about the vertical centre axis**. Two dowels sit **on** that axis (one above, one below the board), so they don't move when you flip.
+- srm-cam drills the dowel holes, mills the bottom **mirrored**, and mills the top as **plain F.Cu** (it reflects the top so it still lines up after the flip).
+- You re-seat the flipped board on the same pins and **re-zero only Z** — never X/Y.
+
+In srm-cam: export your board with an **F.Cu** layer present, tick **Double-sided**, and pick a **registration method**. The in-app **Guide → Double-sided** button walks through every setting:
+- **Dowel pins** (recommended) — the mill drills holes through the stock into the sacrificial bed; you seat pins and flip onto them. No measuring.
+- **Fiducial holes** — the mill drills stock-only corner holes; you flip, re-place freely, and probe where they actually landed so the top is fitted to the real position.
+
+![srm-cam double-sided page](images-for-guides/cnc-images/srmcam_doublesided.png "srm-cam's Double-sided page: method, registration scheme and view")
+
+srm-cam also writes a **`_runplan.txt`** with the exact pin sizes and the order to run the jobs (`_align` → bottom drill → `_bottom_traces` → **flip** → `_top_traces` → `_cutout` last). Follow it step by step, and re-zero **only Z** after the flip.
+
+Done right, both sides line up through the holes. Here's a finished double-sided board milled this way, held up to the light:
+
+<table>
+<tr>
+<td width="50%"><img src="images-for-guides/cnc-images/doublesided_bcu.jpg" alt="Bottom copper (B.Cu)"><br><sub><b>Bottom side — B.Cu</b></sub></td>
+<td width="50%"><img src="images-for-guides/cnc-images/doublesided_fcu.jpg" alt="Top copper (F.Cu)"><br><sub><b>Top side — F.Cu</b></sub></td>
+</tr>
+</table>
+
+<br>
+
+### Bed leveling (optional)
+The lab's SRM-20 already has the **auto-leveling touch probe installed**, so there's nothing to set up — you just attach the clips. Bed leveling probes the copper surface and builds a height map, so the isolation depth stays consistent even if the board is slightly bowed or the bed isn't perfectly flat.
+
+1. Attach the alligator clips: **red → the copper board**, **black → the drill bit**.
+2. In srm-cam open the **Bed Leveling** page, click **Build grid**, then **Probe over SPI** (the in-app **Guide → Bed leveling** button walks through it). The bit taps each grid point and srm-cam folds the height map into the toolpaths.
+
+> [!CAUTION]
+> **Take the black clip off the drill bit before you cut anything.** If it's left on the tool during milling it will snag and snap the bit (and can damage the probe). Clips on for probing only — **off for every cut**.
+
+> [!NOTE]
+> This probing workflow will be refined further in the future, but it already works reliably as-is.
 
 
 
