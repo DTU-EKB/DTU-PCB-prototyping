@@ -268,6 +268,7 @@ The Roland monoFab **SRM-20** is a small desktop CNC mill. Instead of burning th
 - [Preparing your PCB](#preparing-your-pcb-cnc)
 - [Using the SRM-20](#using-the-srm-20)
 - [Double-sided boards (advanced)](#double-sided-boards-advanced)
+- [Bed leveling (optional)](#bed-leveling-optional)
 
 <br>
 
@@ -504,6 +505,20 @@ Done right, both sides line up through the holes. Here's a finished double-sided
 <td width="50%"><img src="images-for-guides/cnc-images/doublesided_fcu.jpg" alt="Top copper (F.Cu)"><br><sub><b>Top side — F.Cu</b></sub></td>
 </tr>
 </table>
+
+<br>
+
+### Bed leveling (optional)
+The lab's SRM-20 already has the **auto-leveling touch probe installed**, so there's nothing to set up — you just attach the clips. Bed leveling probes the copper surface and builds a height map, so the isolation depth stays consistent even if the board is slightly bowed or the bed isn't perfectly flat.
+
+1. Attach the alligator clips: **red → the copper board**, **black → the drill bit**.
+2. In srm-cam open the **Bed Leveling** page, click **Build grid**, then **Probe over SPI** (the in-app **Guide → Bed leveling** button walks through it). The bit taps each grid point and srm-cam folds the height map into the toolpaths.
+
+> [!CAUTION]
+> **Take the black clip off the drill bit before you cut anything.** If it's left on the tool during milling it will snag and snap the bit (and can damage the probe). Clips on for probing only — **off for every cut**.
+
+> [!NOTE]
+> This probing workflow will be refined further in the future, but it already works reliably as-is.
 
 
 
