@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="400" viewBox="0 0 820 400" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="820" height="400" rx="12" fill="#ffffff"/>
+  <text x="410" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#1a1a1a">Double-sided flip — the board turns left&#8596;right about the vertical axis</text>
+
+  <!-- ===== Step 1: bottom ===== -->
+  <text x="180" y="78" text-anchor="middle" font-size="14" font-weight="600" fill="#333">1 &#183; Mill the bottom</text>
+  <text x="180" y="96" text-anchor="middle" font-size="12" fill="#666">B.Cu, milled mirrored</text>
+  <!-- board -->
+  <rect x="90" y="120" width="180" height="170" rx="6" fill="#0d7a42" stroke="#094f2b" stroke-width="2"/>
+  <!-- trace hints -->
+  <path d="M120 160 H240 M120 195 H210 M120 230 H240 M120 260 H200" stroke="#7ff0b0" stroke-width="3" fill="none" opacity="0.8"/>
+  <!-- flip axis -->
+  <line x1="180" y1="96" x2="180" y2="320" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 5"/>
+  <!-- dowels on the axis, outside the board -->
+  <circle cx="180" cy="110" r="9" fill="#9aa0a6" stroke="#5f6368" stroke-width="2"/>
+  <circle cx="180" cy="300" r="13" fill="#9aa0a6" stroke="#5f6368" stroke-width="2"/>
+  <text x="205" y="114" font-size="11" fill="#777">&#216;2 mm</text>
+  <text x="205" y="305" font-size="11" fill="#777">&#216;3 mm</text>
+  <text x="180" y="338" text-anchor="middle" font-size="11" fill="#c0392b">flip axis (dowels live here)</text>
+
+  <!-- ===== flip arrow ===== -->
+  <path d="M320 205 C 380 170, 440 170, 500 205" fill="none" stroke="#1a73e8" stroke-width="3"/>
+  <polygon points="500,205 489,197 491,210" fill="#1a73e8"/>
+  <text x="410" y="165" text-anchor="middle" font-size="14" font-weight="600" fill="#1a73e8">flip left &#8596; right</text>
+  <text x="410" y="232" text-anchor="middle" font-size="11" fill="#888">(re-zero Z after the flip)</text>
+
+  <!-- ===== Step 2: top ===== -->
+  <text x="640" y="78" text-anchor="middle" font-size="14" font-weight="600" fill="#333">2 &#183; Drop onto the dowels, mill the top</text>
+  <text x="640" y="96" text-anchor="middle" font-size="12" fill="#666">plain F.Cu (reflected back to normal)</text>
+  <rect x="550" y="120" width="180" height="170" rx="6" fill="#0d7a42" stroke="#094f2b" stroke-width="2"/>
+  <path d="M600 160 H720 M610 195 H720 M600 230 H720 M640 260 H720" stroke="#7ff0b0" stroke-width="3" fill="none" opacity="0.8"/>
+  <line x1="640" y1="96" x2="640" y2="320" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 5"/>
+  <circle cx="640" cy="110" r="9" fill="#9aa0a6" stroke="#5f6368" stroke-width="2"/>
+  <circle cx="640" cy="300" r="13" fill="#9aa0a6" stroke="#5f6368" stroke-width="2"/>
+  <text x="640" y="338" text-anchor="middle" font-size="11" fill="#c0392b">same dowels, board flipped onto them</text>
+
+  <!-- footer note -->
+  <text x="410" y="378" text-anchor="middle" font-size="12" fill="#555">The two dowels sit on the flip axis, so they are unchanged by the flip — lift the board off, turn it left&#8596;right, drop it back on.</text>
+</svg>
