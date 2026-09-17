@@ -16,7 +16,7 @@ The software that turns your KiCad files into machine programs is **SRM-CAM**. I
 <br>
 
 ### Selecting the right components (CNC)
-Exactly the same as for the Fiber laser — single-sided, with all traces on the back layer (**B.Cu**) and the through-hole footprints listed in the [footprints table](footprints table.md).
+Exactly the same as for the Fiber laser — single-sided, with all traces on the back layer (**B.Cu**) and the through-hole footprints listed in the [footprints table](footprints_table.md).
 
 <br>
 

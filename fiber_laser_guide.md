@@ -9,7 +9,7 @@
 <br>
 
 ### Selecting the right components
-Make sure that you have selected the proper footprints for your components. If you use components from the Component-shop on Ballerup Campus, use the footprints [footprints table](footprints table.md).
+Make sure that you have selected the proper footprints for your components. If you use components from the Component-shop on Ballerup Campus, use the footprints [footprints table](footprints_table.md).
 
 
 <br>
