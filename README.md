@@ -6,6 +6,7 @@ Guide for producing PCB's from KiCad with DTU Ballerup equipment.
 ## What will you need?
 - [KiCad 9.0+](https://www.kicad.org/download/)
 - A **single-sided**[^1] copper PCB FR4 board.
+- Design your PCB with the footprints listed in the [footprints table](footprints_table.md).
 - Have participated in the safety course held by the professor or TA's.
 
 <br>
