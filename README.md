@@ -72,7 +72,7 @@ It can also be a good idea to increase the size of traces for easier result cons
 <br>
 
 ### Selecting the right components
-Make sure that you have selected the proper footprints for your components. If you use components from the Component-shop on Ballerup Campus, use the footprints [footprints table](Component_list.md).
+Make sure that you have selected the proper footprints for your components. If you use components from the Component-shop on Ballerup Campus, use the footprints [footprints table](footprints table.md).
 
 
 <br>
@@ -276,7 +276,7 @@ The software that turns your KiCad files into machine programs is **SRM-CAM**. I
 <br>
 
 ### Selecting the right components (CNC)
-Exactly the same as for the Fiber laser — single-sided, with all traces on the back layer (**B.Cu**) and the through-hole footprints listed in the [footprints table](Component_list.md).
+Exactly the same as for the Fiber laser — single-sided, with all traces on the back layer (**B.Cu**) and the through-hole footprints listed in the [footprints table](footprints table.md).
 
 <br>
 
