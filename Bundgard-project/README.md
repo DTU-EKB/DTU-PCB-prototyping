@@ -1,4 +1,4 @@
-# DTU-pcbCNC
+# DTU-pcbCNC (This part of the project is archived and not to be used for actual PCB prototyping)
 
 Various project files for the Bungard CNC pcb router at DTU
 
